@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA — El Eco de lo Invisible | Diana Llampallas</title>
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Librería para generación de QR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Archivo de Estilos Externo -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <i class="fa-solid fa-shapes"></i>
+      </div>
+      <span>AURA</span>
+    </a>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-badge"><i class="fa-solid fa-sparkles"></i> Colección 2026</span>
+      <h1>El Eco de lo Invisible</h1>
+      <p>Catálogo digital y centro de información de obras de <strong>Diana Llampallas</strong> para exposición plástica.</p>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Buscar por título, técnica o número..." onkeyup="filterArtworks()">
+      </div>
+
+      <div class="filter-pills" id="filterPills">
+        <button class="pill active" onclick="setCategory('all', event)">Todas</button>
+        <button class="pill" onclick="setCategory('mixta', event)">Técnica Mixta</button>
+        <button class="pill" onclick="setCategory('tinta', event)">Tinta China</button>
+        <button class="pill" onclick="setCategory('esgrafiado', event)">Esgrafiado</button>
+      </div>
+    </div>
+
+    <!-- Art Gallery Grid -->
+    <div class="gallery-grid" id="galleryGrid">
+      <!-- Inyectado dinámicamente con JavaScript -->
+    </div>
+  </main>
+
+  <!-- Modal Ficha Técnica -->
+  <div class="modal-overlay" id="artModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()" aria-label="Cerrar modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="modal-grid">
+        <div class="modal-image-container">
+          <img id="modalImg" src="" alt="Obra de Arte">
+        </div>
+        <div class="modal-info">
+          <div>
+            <span class="spec-badge" id="modalCategory">Categoría</span>
+            <h2 class="modal-title" id="modalTitle">Título de la Obra</h2>
+            <p class="modal-artist" id="modalArtist">Por Diana Llampallas</p>
+          </div>
+
+          <div class="spec-list">
+            <div class="spec-item">
+              <span class="spec-label">Número de Obra</span>
+              <span class="spec-value" id="modalNumber">-</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Año de Creación</span>
+              <span class="spec-value" id="modalYear">-</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Técnica / Medio</span>
+              <span class="spec-value" id="modalMedium">-</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Dimensiones Obra</span>
+              <span class="spec-value" id="modalDimensions">-</span>
+            </div>
+            <div class="spec-item" id="rowFrame">
+              <span class="spec-label">Con Marco (C/M)</span>
+              <span class="spec-value" id="modalFrame">-</span>
+            </div>
+          </div>
+
+          <div class="spec-item" style="border:none; padding: 0;">
+            <span class="spec-label" style="margin-bottom: 6px; font-weight: 600;">Descripción & Contexto</span>
+            <p class="modal-desc" id="modalDesc">-</p>
+          </div>
+
+          <!-- Sección Generadora de QR -->
+          <div class="qr-section">
+            <button class="btn btn-secondary" onclick="toggleQR()">
+              <i class="fa-solid fa-qrcode"></i> Ver / Descargar Código QR
+            </button>
+            <div id="qrContainer" class="qr-container hidden">
+              <div id="qrcode"></div>
+              <p class="qr-hint">Escanea este código para ir directo a esta obra.</p>
+              <button class="btn-download-qr" onclick="downloadQR()">
+                <i class="fa-solid fa-download"></i> Descargar Imagen QR
+              </button>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn btn-primary" onclick="alert('Solicitud enviada. Nos pondremos en contacto a la brevedad.')">
+              <i class="fa-regular fa-envelope"></i> Consultar adquisición
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lógica JavaScript -->
+  <script>
+    const artworks = [
+      { id: 1, title: "01. Fuego Magnético", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "58 x 48 cm", desc: "Hay una fuerza pasional. La silueta recostada transmite un estado de renacimiento ardiente y energía emocional desbordante.", image: "images/img01.jpg" },
+      { id: 2, title: "02. Abrazo de Sombra", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "58 x 48 cm", desc: "Sus formas entre la sombra y el azul simbolizan la melancolía que busca escapar... sin éxito.", image: "images/img02.jpg" },
+      { id: 3, title: "03. Reflejo Interior", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "63 x 47 cm", desc: "La silueta contorsionada y los trazos oscuros sobre un fondo caótico evocan conflicto interno entre transformarse o seguir siendo ella misma ante un dolor profundo.", image: "images/img03.jpg" },
+      { id: 4, title: "04. Metamorfosis Encendida", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "63 x 38 cm", desc: "Evoca un proceso de colapso emocional donde el caos consciente busca desesperadamente liberarse del dolor.", image: "images/img04.jpg" },
+      { id: 5, title: "05. Resonancia Magenta", artist: "Diana Llampallas", year: 2025, category: "tinta", categoryName: "Tinta China", medium: "Tinta china", dimensions: "48 x 38 cm", frame: "60 x 50 cm", desc: "Las trazas oscuras entrelazadas sugieren una red emocional vulnerable donde la pasión consume, transforma y libera la psique.", image: "images/img05.jpg" },
+      { id: 6, title: "06. Erosión Vital", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "58 x 48 cm", desc: "Las dos figuras entrelazadas en un fondo vinoso transmiten una conexión profunda y vulnerable. El contraste entre calidez y sombras refleja la tensión emocional de la intimidad y el apego.", image: "images/img06.jpg" },
+      { id: 7, title: "07. Murmullos al Oído", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "53 x 43 cm", desc: "Es la búsqueda interna de claridad mental entre capas de pensamientos abstractos, nostalgia y serenidad profunda.", image: "images/img07.jpg" },
+      { id: 8, title: "08. Memorias Ocultas", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "56 x 45 cm", desc: "Entre destellos de color, la obra expresa la nostalgia, el anhelo y el dolor persistente de lo olvidado.", image: "images/img08.jpg" },
+      { id: 9, title: "09. Penumbra Magnética", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "56 x 45 cm", desc: "Esta atmósfera en penumbra ejerce un magnetismo hipnótico y misterioso a lo desconocido, evocando un deseo irresistible por explorar las sombras emocionales.", image: "images/img09.jpg" },
+      { id: 10, title: "10. Silencio Espeso", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "58 x 47 cm", desc: "La obra simboliza una mente luminosa atravesada por pensamientos intrusivos y tensión emocional.", image: "images/img10.jpg" },
+      { id: 11, title: "11. Vestigio de Fuego", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "58 x 47 cm", desc: "Los destellos rojizos evocan el fuego ardiente de lo que fue la pasión. Lo que hoy queda es la ceniza negra: una huella viva de nostalgia, caos y doloroso recuerdo.", image: "images/img11.jpg" },
+      { id: 12, title: "12. El Sueño del Fuego", artist: "Diana Llampallas", year: 2025, category: "esgrafiado", categoryName: "Esgrafiado", medium: "Esgrafiado sobre mixta", dimensions: "48 x 33 cm", frame: "58 x 47 cm", desc: "Las siluetas danzantes emergen del fuego azul primordial, un elemento mítico y misterioso. Esta llama no consume: ilumina el juego divino, revelando espíritus ancestrales en la penumbra del cosmos.", image: "images/img12.jpg" },
+      { id: 13, title: "13. Oasis I", artist: "Diana Llampallas", year: 2025, category: "esgrafiado", categoryName: "Esgrafiado", medium: "Esgrafiado sobre mixta", dimensions: "30 x 45 cm", frame: "62 x 53 cm", desc: "La obra refleja la necesidad de un santuario emocional, donde el caos interno se transforma en un espacio de sanación y sosiego, ¡un Oasis!", image: "images/img13.jpg" },
+      { id: 14, title: "14. Anatomía de Paisaje", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "40 x 30 cm", frame: "43 x 32.5 cm", desc: "Los tonos rojos y verdes contrastan pasión y naturaleza, revelando un paisaje emotivo donde la mirada felina conecta el instinto con la serenidad.", image: "images/img14.jpg" },
+      { id: 15, title: "15. Conflicto entre la Vida y la Muerte", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "40 x 30 cm", frame: "42 x 32.5 cm", desc: "La composición enfrenta la finitud con el sol radiante, expresando aceptación ante el ciclo indisoluble entre vida y muerte.", image: "images/img15.jpg" },
+      { id: 16, title: "16. Anatomía del Fuego", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "44 x 36 cm", frame: "Sin Marco", desc: "El contraste de tonos encendidos expresa una desnudez psíquica donde el deseo y la transformación interior finalmente conviven.", image: "images/img16.jpg" },
+      { id: 17, title: "17. La Chamana", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "43 x 33 cm", frame: "Sin Marco", desc: "La silueta púrpura encarna la fuerza mística de la chamana. Sobre el aura amarilla, los trazos oscuros proyectan sabiduría ancestral, poder femenino y una profunda sanación psicológica e introspectiva.", image: "images/img17.jpg" },
+      { id: 18, title: "18. Fragmento de una Historia", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "44 x 36 cm", frame: "Sin Marco", desc: "La mirada esquiva del perfil sugiere introspección y búsqueda, invitando al espectador a explorar los misterios de la psique humana.", image: "images/img18.jpg" },
+      { id: 19, title: "19. Tierra y Fuego", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "44 x 36 cm", frame: "Sin Marco", desc: "El destello cálido entre penumbras abismales simboliza la mística del fuego interno. Esta llama sagrada ilumina la oscuridad psíquica.", image: "images/img19.jpg" },
+      { id: 20, title: "20. Memoria Ahogada", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61.5 x 46 cm", frame: "Sin Marco", desc: "Entre las sombras psíquicas, la luz interior fractura el capullo, marcando el doloroso y luminoso renacer del ser.", image: "images/img20.jpg" },
+      { id: 21, title: "21. El Corazón del Bosque", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61.5 x 45 cm", frame: "Sin Marco", desc: "El espeso bosque azul evoca la profundidad del inconsciente. Entre sombras y destellos turquesa, el corazón psíquico resguarda secretos ancestrales, invitando a una serena e inmensa introspección.", image: "images/img21.jpg" },
+      { id: 22, title: "22. Herida Luminosa", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "60 x 45 cm", frame: "Sin Marco", desc: "Entre sombras caóticas y violetas intensos, la psique procesa un torbellino emocional donde la pasión encuentra su propia calma.", image: "images/img22.jpg" },
+      { id: 23, title: "23. Memoria del Paisaje", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61 x 46 cm", frame: "Sin Marco", desc: "Los verdes profundos y ocres terrosos representan la arboleda del alma. Entre sombras y brotes de luz vital, la psique encuentra arraigo, revelando senderos donde la memoria y el renacer echan raíces.", image: "images/img23.jpg" },
+      { id: 24, title: "24. La Gran Chamana", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "100 x 80 cm", frame: "Sin Marco", desc: "La monumental silueta púrpura encarna la gran chamana. Envuelta en un aura dorada, sus trazos ancestrales proyectan poder matriarcal, sabiduría mística y la profunda sanación espiritual del inconsciente.", image: "images/img24.jpg" },
+      { id: 25, title: "25. Introspección", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "100 x 80 cm", frame: "Sin Marco", desc: "La figura, como una vasija cósmica, contiene el universo. Del caos primordial surgen animales totémicos y espirales, simbolizando el eterno retorno y la danza mágica de la existencia material y espiritual.", image: "images/img25.jpg" },
+      { id: 26, title: "26. Anatomía del Fuego II", artist: "Diana Llampallas", year: 2026, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "100 x 80 cm", frame: "Sin Marco", desc: "Expresa la rendición psicológica hacia una pasión ardiente que libera y renueva el espíritu.", image: "images/img26.jpg" },
+      { id: 27, title: "27. La Guardiana de la Semilla", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "69 x 59 cm", frame: "Sin Marco", desc: "La serena silueta dorada encarna a la deidad solar. Entre espirales cósmicas y tonos celestes y terrosos, canaliza la creación originaria, hilando el tiempo y los misterios del cosmos.", image: "images/img27.jpg" },
+      { id: 28, title: "28. Madre Tierra en el Inframundo", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "69 x 59 cm", frame: "Sin Marco", desc: "La silueta escarlata encarna a la Madre Primigenia de Fuego. Envuelta en espirales carmesí y espíritus totémicos, canaliza el poder de la creación, la pasión sagrada y el misterio vital.", image: "images/img28.jpg" }
+    ];
+
+    let currentCategory = 'all';
+    let currentActiveArtworkId = null;
+    let qrGeneratorInstance = null;
+
+    function renderGallery(items) {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; opacity:0.5;"></i>
+            <h3>No se encontraron obras</h3>
+            <p>Intenta ajustar tus criterios de búsqueda o filtros.</p>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(art => {
+        const card = document.createElement('div');
+        card.className = 'art-card';
+        card.onclick = () => openModal(art.id);
+
+        card.innerHTML = `
+          <div class="card-image-wrap">
+            <img src="${art.image}" alt="${art.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Obra+${art.id}'">
+            <span class="card-category-badge">${art.categoryName}</span>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">${art.title}</h3>
+                <p class="card-artist">${art.artist}, ${art.year}</p>
+              </div>
+            </div>
+            <div class="card-quick-specs">
+              <div class="quick-spec"><i class="fa-solid fa-ruler-combined"></i> ${art.dimensions}</div>
+              <div class="quick-spec"><i class="fa-solid fa-palette"></i> ${art.medium}</div>
+            </div>
+            <div class="card-footer">
+              <span class="view-btn">Ver Ficha Técnica <i class="fa-solid fa-arrow-right"></i></span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterArtworks() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      
+      const filtered = artworks.filter(art => {
+        const matchesCategory = currentCategory === 'all' || art.category === currentCategory;
+        const matchesSearch = art.title.toLowerCase().includes(search) ||
+                              art.artist.toLowerCase().includes(search) ||
+                              art.medium.toLowerCase().includes(search) ||
+                              art.categoryName.toLowerCase().includes(search) ||
+                              art.id.toString() === search.trim();
+        return matchesCategory && matchesSearch;
+      });
+
+      renderGallery(filtered);
+    }
+
+    function setCategory(cat, event) {
+      currentCategory = cat;
+      const pills = document.querySelectorAll('.pill');
+      pills.forEach(p => p.classList.remove('active'));
+      
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
+      filterArtworks();
+    }
+
+    function openModal(id, updateHistory = true) {
+      const art = artworks.find(item => item.id === id);
+      if (!art) return;
+
+      currentActiveArtworkId = id;
+
+      document.getElementById('modalImg').src = art.image;
+      document.getElementById('modalCategory').innerText = art.categoryName;
+      document.getElementById('modalTitle').innerText = art.title;
+      document.getElementById('modalArtist').innerText = `Por ${art.artist}`;
+      document.getElementById('modalNumber').innerText = `Obra #${art.id}`;
+      document.getElementById('modalYear').innerText = art.year;
+      document.getElementById('modalMedium').innerText = art.medium;
+      document.getElementById('modalDimensions').innerText = art.dimensions;
+
+      const frameRow = document.getElementById('rowFrame');
+      if (art.frame && art.frame !== "Sin Marco") {
+        frameRow.style.display = "flex";
+        document.getElementById('modalFrame').innerText = art.frame;
+      } else {
+        frameRow.style.display = "none";
+      }
+
+      document.getElementById('modalDesc').innerText = art.desc;
+
+      // Resetear vista de QR
+      document.getElementById('qrContainer').classList.add('hidden');
+
+      const modal = document.getElementById('artModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Actualizar la URL con el parámetro de la obra para permitir compartir enlaces/QR
+      if (updateHistory) {
+        const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?obra=${id}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      }
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('artModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+
+      // Limpiar el parámetro ?obra= de la URL al cerrar el modal
+      const cleanUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+      window.history.pushState({ path: cleanUrl }, '', cleanUrl);
+    }
+
+    function closeModalOnOverlay(e) {
+      if (e.target.classList.contains('modal-overlay')) {
+        closeModal();
+      }
+    }
+
+    // Lógica para Generar y Mostrar el Código QR de la Obra Actual
+    function toggleQR() {
+      const qrContainer = document.getElementById('qrContainer');
+      const isHidden = qrContainer.classList.contains('hidden');
+
+      if (isHidden) {
+        qrContainer.classList.remove('hidden');
+        
+        // Construir la URL directa a la obra
+        const targetUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?obra=${currentActiveArtworkId}`;
+        
+        const qrcodeDiv = document.getElementById('qrcode');
+        qrcodeDiv.innerHTML = ''; // Limpiar previo
+
+        qrGeneratorInstance = new QRCode(qrcodeDiv, {
+          text: targetUrl,
+          width: 160,
+          height: 160,
+          colorDark: "#2E1065",
+          colorLight: "#FFFFFF",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      } else {
+        qrContainer.classList.add('hidden');
+      }
+    }
+
+    function downloadQR() {
+      const qrImg = document.querySelector('#qrcode img');
+      const qrCanvas = document.querySelector('#qrcode canvas');
+      let imageSrc = "";
+
+      if (qrImg && qrImg.src) {
+        imageSrc = qrImg.src;
+      } else if (qrCanvas) {
+        imageSrc = qrCanvas.toDataURL("image/png");
+      }
+
+      if (imageSrc) {
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imageSrc;
+        downloadLink.download = `QR_Obra_${currentActiveArtworkId}_Diana_Llampallas.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      }
+    }
+
+    // Detectar si el usuario escaneó un QR con parámetro URL ?obra=ID
+    function checkUrlForArtwork() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const obraId = parseInt(urlParams.get('obra'));
+      if (obraId && !isNaN(obraId)) {
+        openModal(obraId, false);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Inicializar catálogo y verificar parámetros de la URL
+    renderGallery(artworks);
+    checkUrlForArtwork();
+  </script>
+</body>
+</html>
