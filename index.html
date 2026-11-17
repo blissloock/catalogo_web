@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AURA — El Eco de lo Invisible | Diana Llampallas</title>
+  <title>AURA — Irrupción Artística | Colectivo Corporativo Hermeticus</title>
   
-  <!-- Google Fonts & Font Awesome Icons -->
+  <!-- Google Fonts Editorial & Font Awesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Librería para generación de QR -->
@@ -16,25 +16,54 @@
 
   <!-- Archivo de Estilos Externo -->
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- Estilos adicionales específicos para el Díptico -->
+  <style>
+    .diptico-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      height: 100%;
+    }
+    .diptico-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      max-height: 68vh;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+    }
+    .diptico-badge {
+      background: var(--accent-gold);
+      color: #fff;
+      padding: 2px 8px;
+      font-size: 0.65rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-left: 8px;
+    }
+  </style>
 </head>
 <body>
 
   <!-- Navbar -->
   <header class="navbar">
     <a href="#" class="logo">
-      <div class="logo-mark">
-        <i class="fa-solid fa-shapes"></i>
-      </div>
-      <span>AURA</span>
+      <span class="logo-title">AURA</span>
+      <span class="logo-divider"></span>
+      <span class="logo-subtitle">Galería & Archivo</span>
     </a>
+    <div class="nav-meta">Exposición Colectiva · 2026</div>
   </header>
 
   <!-- Hero Banner -->
   <section class="hero">
     <div class="hero-content">
-      <span class="hero-badge"><i class="fa-solid fa-sparkles"></i> Colección 2026</span>
-      <h1>El Eco de lo Invisible</h1>
-      <p>Catálogo digital y centro de información de obras de <strong>Diana Llampallas</strong> para exposición plástica.</p>
+      <span class="hero-eyebrow">Exposición Colectiva 2026</span>
+      <h1>Irrupción Artística</h1>
+      <div class="hero-line"></div>
+      <p>Catálogo digital de obra plástica por <strong>Colectivo Corporativo Hermeticus</strong>.</p>
     </div>
   </section>
 
@@ -44,16 +73,17 @@
     <div class="controls-bar">
       <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Buscar por título, técnica o número..." onkeyup="filterArtworks()">
+        <input type="text" id="searchInput" placeholder="Buscar por título, autor o técnica..." onkeyup="filterArtworks()">
       </div>
 
       <div class="filter-pills" id="filterPills">
         <button class="pill active" onclick="setCategory('all', event)">Todas</button>
-        <button class="pill" onclick="setCategory('mixta', event)">Técnica Mixta</button>
-        <button class="pill" onclick="setCategory('tinta', event)">Tinta China</button>
-        <button class="pill" onclick="setCategory('esgrafiado', event)">Esgrafiado</button>
-        <button class="pill" onclick="setCategory('acrilico', event)">Acrílico</button>
         <button class="pill" onclick="setCategory('oleo', event)">Óleo</button>
+        <button class="pill" onclick="setCategory('acrilico', event)">Acrílico</button>
+        <button class="pill" onclick="setCategory('mixta', event)">Técnica Mixta</button>
+        <button class="pill" onclick="setCategory('offset', event)">Tinta Offset</button>
+        <button class="pill" onclick="setCategory('grabado', event)">Grabado</button>
+        <button class="pill" onclick="setCategory('esgrafiado', event)">Esgrafiado</button>
       </div>
     </div>
 
@@ -63,6 +93,11 @@
     </div>
   </main>
 
+  <!-- Footer Discreto -->
+  <footer class="gallery-footer">
+    <p>AURA — Archivo Digital de Obra · Colectivo Corporativo Hermeticus © 2026</p>
+  </footer>
+
   <!-- Modal Ficha Técnica -->
   <div class="modal-overlay" id="artModal" onclick="closeModalOnOverlay(event)">
     <div class="modal-card">
@@ -70,66 +105,55 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
       <div class="modal-grid">
-        <div class="modal-image-container">
+        <!-- Contenedor dinámico de imagen (Soporta imagen única o Díptico) -->
+        <div class="modal-image-container" id="modalImageContainer">
           <img id="modalImg" src="" alt="Obra de Arte">
         </div>
+        
         <div class="modal-info">
-          <div>
-            <span class="spec-badge" id="modalCategory">Categoría</span>
+          <div class="modal-header-group">
+            <span class="spec-badge" id="modalCategory">Técnica</span>
             <h2 class="modal-title" id="modalTitle">Título de la Obra</h2>
-            <p class="modal-artist" id="modalArtist">Por Diana Llampallas</p>
+            <p class="modal-artist" id="modalArtist">Autor</p>
           </div>
 
           <div class="spec-list">
             <div class="spec-item">
-              <span class="spec-label">Número de Obra</span>
-              <span class="spec-value" id="modalNumber">-</span>
+              <span class="spec-label">Autor</span>
+              <span class="spec-value" id="modalSpecArtist">-</span>
             </div>
             <div class="spec-item">
-              <span class="spec-label">Año de Creación</span>
-              <span class="spec-value" id="modalYear">-</span>
-            </div>
-            <div class="spec-item">
-              <span class="spec-label">Técnica / Medio</span>
+              <span class="spec-label">Técnica</span>
               <span class="spec-value" id="modalMedium">-</span>
             </div>
             <div class="spec-item">
-              <span class="spec-label">Dimensiones Obra</span>
-              <span class="spec-value" id="modalDimensions">-</span>
-            </div>
-            <div class="spec-item" id="rowFrame">
-              <span class="spec-label">Con Marco (C/M)</span>
-              <span class="spec-value" id="modalFrame">-</span>
-            </div>
-            <div class="spec-item">
-              <span class="spec-label">Precio / Disponibilidad</span>
+              <span class="spec-label">Precio</span>
               <span class="spec-value spec-price" id="modalPrice">-</span>
             </div>
-          </div>
-
-          <div class="spec-item" style="border:none; padding: 0;">
-            <span class="spec-label" style="margin-bottom: 6px; font-weight: 600;">Descripción & Contexto</span>
-            <p class="modal-desc" id="modalDesc">-</p>
+            <div class="spec-item">
+              <span class="spec-label">Contacto</span>
+              <span class="spec-value" id="modalContact">-</span>
+            </div>
           </div>
 
           <!-- Sección Generadora de QR -->
           <div class="qr-section">
             <button class="btn btn-secondary" onclick="toggleQR()">
-              <i class="fa-solid fa-qrcode"></i> Ver / Descargar Código QR
+              <i class="fa-solid fa-qrcode"></i> Cédula QR de Sala
             </button>
             <div id="qrContainer" class="qr-container hidden">
               <div id="qrcode"></div>
-              <p class="qr-hint">Escanea este código para ir directo a esta obra.</p>
+              <p class="qr-hint">Escanea para consultar la ficha técnica en sala.</p>
               <button class="btn-download-qr" onclick="downloadQR()">
-                <i class="fa-solid fa-download"></i> Descargar Imagen QR
+                <i class="fa-solid fa-download"></i> Descargar PNG
               </button>
             </div>
           </div>
 
           <div class="modal-actions">
-            <button class="btn btn-primary" onclick="alert('Solicitud enviada. Nos pondremos en contacto a la brevedad.')">
-              <i class="fa-regular fa-envelope"></i> Consultar adquisición
-            </button>
+            <a id="whatsappBtn" href="#" target="_blank" class="btn btn-primary" style="background-color: #25D366; border-color: #25D366; text-decoration: none;">
+              <i class="fa-brands fa-whatsapp" style="font-size: 1.15rem;"></i> Consultar por WhatsApp
+            </a>
           </div>
         </div>
       </div>
@@ -139,38 +163,35 @@
   <!-- Lógica JavaScript -->
   <script>
     const artworks = [
-      { id: 1, title: "01. Fuego Magnético", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "58 x 48 cm", price: "$4,000 MXN", desc: "Hay una fuerza pasional. La silueta recostada transmite un estado de renacimiento ardiente y energía emocional desbordante.", image: "images/img01.jpg" },
-      { id: 2, title: "02. Abrazo de Sombra", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "58 x 48 cm", price: "Colección Privada", desc: "Sus formas entre la sombra y el azul simbolizan la melancolía que busca escapar... sin éxito. (Colección Privada: Álvaro Reyes Toxqui)", image: "images/img02.jpg" },
-      { id: 3, title: "03. Reflejo Interior", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "63 x 47 cm", price: "$4,000 MXN", desc: "La silueta contorsionada y los trazos oscuros sobre un fondo caótico evocan conflicto interno entre transformarse o seguir siendo ella misma ante un dolor profundo.", image: "images/img03.jpg" },
-      { id: 4, title: "04. Metamorfosis Encendida", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "63 x 38 cm", price: "$4,000 MXN", desc: "Evoca un proceso de colapso emocional donde el caos consciente busca desesperadamente liberarse del dolor.", image: "images/img04.jpg" },
-      { id: 5, title: "05. Resonancia Magenta", artist: "Diana Llampallas", year: 2025, category: "tinta", categoryName: "Tinta China", medium: "Tinta china", dimensions: "48 x 38 cm", frame: "60 x 50 cm", price: "$4,500 MXN", desc: "Las trazas oscuras entrelazadas sugieren una red emocional vulnerable donde la pasión consume, transforma y libera la psique.", image: "images/img05.jpg" },
-      { id: 6, title: "06. Erosión Vital", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "58 x 48 cm", price: "$4,000 MXN", desc: "Las dos figuras entrelazadas en un fondo vinoso transmiten una conexión profunda y vulnerable. El contraste entre calidez y sombras refleja la tensión emocional de la intimidad y el apego.", image: "images/img06.jpg" },
-      { id: 7, title: "07. Murmullos al Oído", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "53 x 43 cm", price: "$4,000 MXN", desc: "Es la búsqueda interna de claridad mental entre capas de pensamientos abstractos, nostalgia y serenidad profunda.", image: "images/img07.jpg" },
-      { id: 8, title: "08. Memorias Ocultas", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "56 x 45 cm", price: "$4,000 MXN", desc: "Entre destellos de color, la obra expresa la nostalgia, el anhelo y el dolor persistente de lo olvidado.", image: "images/img08.jpg" },
-      { id: 9, title: "09. Penumbra Magnética", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "56 x 45 cm", price: "$4,000 MXN", desc: "Esta atmósfera en penumbra ejerce un magnetismo hipnótico y misterioso a lo desconocido, evocando un deseo irresistible por explorar las sombras emocionales.", image: "images/img09.jpg" },
-      { id: 10, title: "10. Silencio Espeso", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 38 cm", frame: "58 x 47 cm", price: "$4,000 MXN", desc: "La obra simboliza una mente luminosa atravesada por pensamientos intrusivos y tensión emocional.", image: "images/img10.jpg" },
-      { id: 11, title: "11. Vestigio de Fuego", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "48 x 33 cm", frame: "58 x 47 cm", price: "$4,000 MXN", desc: "Los destellos rojizos evocan el fuego ardiente de lo que fue la pasión. Lo que hoy queda es la ceniza negra: una huella viva de nostalgia, caos y doloroso recuerdo.", image: "images/img11.jpg" },
-      { id: 12, title: "12. El Sueño del Fuego", artist: "Diana Llampallas", year: 2025, category: "esgrafiado", categoryName: "Esgrafiado", medium: "Esgrafiado sobre mixta", dimensions: "48 x 33 cm", frame: "58 x 47 cm", price: "$4,500 MXN", desc: "Las siluetas danzantes emergen del fuego azul primordial, un elemento mítico y misterioso. Esta llama no consume: ilumina el juego divino, revelando espíritus ancestrales en la penumbra del cosmos.", image: "images/img12.jpg" },
-      { id: 13, title: "13. Oasis I", artist: "Diana Llampallas", year: 2025, category: "esgrafiado", categoryName: "Esgrafiado", medium: "Esgrafiado sobre mixta", dimensions: "30 x 45 cm", frame: "62 x 53 cm", price: "$4,500 MXN", desc: "La obra refleja la necesidad de un santuario emocional, donde el caos interno se transforma en un espacio de sanación y sosiego, ¡un Oasis!", image: "images/img13.jpg" },
-      { id: 14, title: "14. Anatomía de Paisaje", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "40 x 30 cm", frame: "43 x 32.5 cm", price: "Colección Privada", desc: "Los tonos rojos y verdes contrastan pasión y naturaleza, revelando un paisaje emotivo donde la mirada felina conecta el instinto con la serenidad. (Colección Privada: Guadalupe Sosa)", image: "images/img14.jpg" },
-      { id: 15, title: "15. Conflicto entre la Vida y la Muerte", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "40 x 30 cm", frame: "42 x 32.5 cm", price: "Colección Privada", desc: "La composición enfrenta la finitud con el sol radiante, expresando aceptación ante el ciclo indisoluble entre vida y muerte. (Colección Privada: Daniel Llampallas)", image: "images/img15.jpg" },
-      { id: 16, title: "16. Anatomía del Fuego", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "44 x 36 cm", frame: "Sin Marco", price: "$4,500 MXN", desc: "El contraste de tonos encendidos expresa una desnudez psíquica donde el deseo y la transformación interior finalmente conviven.", image: "images/img16.jpg" },
-      { id: 17, title: "17. La Chamana", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "43 x 33 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "La silueta púrpura encarna la fuerza mística de la chamana. Sobre el aura amarilla, los trazos oscuros proyectan sabiduría ancestral, poder femenino y una profunda sanación psicológica e introspectiva.", image: "images/img17.jpg" },
-      { id: 18, title: "18. Fragmento de una Historia", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "44 x 36 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "La mirada esquiva del perfil sugiere introspección y búsqueda, invitando al espectador a explorar los misterios de la psique humana.", image: "images/img18.jpg" },
-      { id: 19, title: "19. Tierra y Fuego", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "44 x 36 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "El destello cálido entre penumbras abismales simboliza la mística del fuego interno. Esta llama sagrada ilumina la oscuridad psíquica.", image: "images/img19.jpg" },
-      { id: 20, title: "20. Memoria Ahogada", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61.5 x 46 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "Entre las sombras psíquicas, la luz interior fractura el capullo, marcando el doloroso y luminoso renacer del ser.", image: "images/img20.jpg" },
-      { id: 21, title: "21. El Corazón del Bosque", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61.5 x 45 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "El espeso bosque azul evoca la profundidad del inconsciente. Entre sombras y destellos turquesa, el corazón psíquico resguarda secretos ancestrales, invitando a una serena e inmensa introspección.", image: "images/img21.jpg" },
-      { id: 22, title: "22. Herida Luminosa", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "60 x 45 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "Entre sombras caóticas y violetas intensos, la psique procesa un torbellino emocional donde la pasión encuentra su propia calma.", image: "images/img22.jpg" },
-      { id: 23, title: "23. Memoria del Paisaje", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61 x 46 cm", frame: "Sin Marco", price: "$4,000 MXN", desc: "Los verdes profundos y ocres terrosos representan la arboleda del alma. Entre sombras y brotes de luz vital, la psique encuentra arraigo, revelando senderos donde la memoria y el renacer echan raíces.", image: "images/img23.jpg" },
-      { id: 24, title: "24. La Gran Chamana", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "100 x 80 cm", frame: "Sin Marco", price: "Colección Privada", desc: "La monumental silueta púrpura encarna la gran chamana. Envuelta en un aura dorada, sus trazos ancestrales proyectan poder matriarcal, sabiduría mística y la profunda sanación espiritual del inconsciente. (Colección Privada: Álvaro Reyes Toxqui)", image: "images/img24.jpg" },
-      { id: 25, title: "25. Introspección", artist: "Diana Llampallas", year: 2025, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "100 x 80 cm", frame: "Sin Marco", price: "$15,000 MXN", desc: "La figura, como una vasija cósmica, contiene el universo. Del caos primordial surgen animales totémicos y espirales, simbolizando el eterno retorno y la danza mágica de la existencia material y espiritual.", image: "images/img25.jpg" },
-      { id: 26, title: "26. Anatomía del Fuego Intenso", artist: "Diana Llampallas", year: 2026, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "100 x 80 cm", frame: "Sin Marco", price: "$15,000 MXN", desc: "Expresa la rendición psicológica hacia una pasión ardiente que libera y renueva el espíritu.", image: "images/img26.jpg" },
-      { id: 27, title: "27. La Guardiana de la Semilla", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "69 x 59 cm", frame: "69 x 59 cm", price: "$5,000 MXN", desc: "La serena silueta dorada encarna a la deidad solar. Entre espirales cósmicas y tonos celestes y terrosos, canaliza la creación originaria, hilando el tiempo y los misterios del cosmos.", image: "images/img27.jpg" },
-      { id: 28, title: "28. Madre Tierra en el Inframundo", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "69 x 59 cm", frame: "69 x 59 cm", price: "$5,000 MXN", desc: "La silueta escarlata encarna a la Madre Primigenia de Fuego. Envuelta en espirales carmesí y espíritus totémicos, canaliza el poder de la creación, la pasión sagrada y el misterio vital.", image: "images/img28.jpg" },
-      { id: 29, title: "29. Susurros en Penumbra", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61.5 x 51.5 cm", frame: "61.5 x 51.5 cm", price: "$5,000 MXN", desc: "Atmósfera introspectiva que resalta los secretos que yacen en la penumbra del inconsciente.", image: "images/img29.jpg" },
-      { id: 30, title: "30. La Mensajera del Equilibrio", artist: "Diana Llampallas", year: 2024, category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", dimensions: "61.5 x 51.5 cm", frame: "61.5 x 51.5 cm", price: "$5,000 MXN", desc: "Una exploración de la armonía y la dualidad a través de trazos dinámicos y colores profundos.", image: "images/img30.jpg" },
-      { id: 31, title: "31. Memoria del Viento", artist: "Diana Llampallas", year: 2024, category: "acrilico", categoryName: "Acrílico", medium: "Acrílico", dimensions: "84 x 64 cm", frame: "84 x 64 cm", price: "$10,000 MXN", desc: "El movimiento y la fuerza del viento esculpen el paisaje en una representación viva de la naturaleza indomable.", image: "images/img31.jpg" },
-      { id: 32, title: "32. El Rastro de la Acción", artist: "Diana Llampallas", year: 2024, category: "oleo", categoryName: "Óleo sobre tela", medium: "Óleo sobre tela", dimensions: "39 x 50 cm", frame: "39 x 50 cm", price: "$7,000 MXN", desc: "Reflejo del proceso creativo mismo, donde las manos manchadas y las herramientas capturan la energía del acto pictórico.", image: "images/img32.jpg" }
+      { 
+        id: 1, 
+        title: "01. Díptico Reminiscencias Prehistóricas", 
+        artist: "David León Amarillas", 
+        category: "oleo", 
+        categoryName: "Óleo", 
+        medium: "Óleo sobre tela (Díptico)", 
+        price: "$20,000 c/u o 2 por $30,000", 
+        contact: "66 2847 8316", 
+        image: "images/img01.jpeg",
+        isDiptico: true,
+        imagesDiptico: ["images/img01.jpeg", "images/img1.5.jpeg"] 
+      },
+      { id: 2, title: "02. Ansiedad", artist: "Iván Rodríguez Vargas", category: "acrilico", categoryName: "Acrílico", medium: "Acrílico", price: "Precio pendiente", contact: "55 4889 3357", image: "images/img02.jpeg", isDiptico: false },
+      { id: 3, title: "03. Confusión I", artist: "Leticia Sánchez Chavero", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "Precio pendiente", contact: "55 7132 8771", image: "images/img03.jpeg", isDiptico: false },
+      { id: 4, title: "04. El Gallo de Oro", artist: "Raúl Bravo Millán", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre loneta", price: "$8,000 MXN", contact: "56 3082 5327", image: "images/img04.jpeg", isDiptico: false },
+      { id: 5, title: "05. Corazón Valiente", artist: "Raúl Bravo Millán", category: "offset", categoryName: "Tinta Offset", medium: "Tinta offset sobre loneta", price: "$4,500 MXN", contact: "56 3082 5327", image: "images/img05.jpeg", isDiptico: false },
+      { id: 6, title: "06. Floral", artist: "Raúl Bravo Millán", category: "offset", categoryName: "Tinta Offset", medium: "Tinta offset sobre loneta", price: "$5,500 MXN", contact: "56 3082 5327", image: "images/img06.jpeg", isDiptico: false },
+      { id: 7, title: "07. Donde florece el recuerdo", artist: "María Adela Gameros Vargas", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "$4,000 MXN", contact: "55 3823 1023", image: "images/img07.jpeg", isDiptico: false },
+      { id: 8, title: "08. Acordes de la Tierra", artist: "María Adela Gameros Vargas", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "$2,000 MXN", contact: "55 3823 1023", image: "images/img08.jpeg", isDiptico: false },
+      { id: 9, title: "09. Hombre de Maíz", artist: "Álvaro Reyes Toxqui", category: "grabado", categoryName: "Grabado", medium: "Grabado en linóleo", price: "No a la venta", contact: "55 3814 1057", image: "images/img09.jpeg", isDiptico: false },
+      { id: 10, title: "10. La Niña y los Perros", artist: "Álvaro Reyes Toxqui", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "No a la venta", contact: "55 3814 1057", image: "images/img10.jpeg", isDiptico: false },
+      { id: 11, title: "11. El sueño del fuego", artist: "Diana Llampallas Sosa", category: "esgrafiado", categoryName: "Esgrafiado", medium: "Esgrafiado sobre mixta", price: "$4,000 MXN", contact: "56 1081 3531", image: "images/img11.jpeg", isDiptico: false },
+      { id: 12, title: "12. Murmullo", artist: "Elías Guerrero Vargas", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "Vendido", contact: "55 6786 6904", image: "images/img12.jpeg", isDiptico: false },
+      { id: 13, title: "13. Playa Zapotengo", artist: "Elías Guerrero Vargas", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "$12,000 MXN", contact: "55 6786 6904", image: "images/img13.jpeg", isDiptico: false },
+      { id: 14, title: "14. Flores de Verano", artist: "María Adela Gameros Vargas", category: "oleo", categoryName: "Óleo", medium: "Óleo sobre tela", price: "$2,000 MXN", contact: "55 3823 1023", image: "images/img14.jpeg", isDiptico: false },
+      { id: 15, title: "15. Abuelo", artist: "Iván Rodríguez Vargas", category: "other", categoryName: "Técnica por confirmar", medium: "Por confirmar", price: "Precio pendiente", contact: "55 4889 3357", image: "images/img15.jpeg", isDiptico: false },
+      { id: 16, title: "16. Un largo viaje", artist: "Jaime Flores Hernández", category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", price: "$5,400 MXN", contact: "55 7832 7018", image: "images/img16.jpeg", isDiptico: false },
+      { id: 17, title: "17. El Elixir Pagano", artist: "Jaime Flores Hernández", category: "mixta", categoryName: "Técnica Mixta", medium: "Mixta", price: "$5,400 MXN", contact: "55 7832 7018", image: "images/img17.jpeg", isDiptico: false }
     ];
 
     let currentCategory = 'all';
@@ -183,39 +204,37 @@
 
       if (items.length === 0) {
         grid.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
-            <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; opacity:0.5;"></i>
-            <h3>No se encontraron obras</h3>
-            <p>Intenta ajustar tus criterios de búsqueda o filtros.</p>
+          <div class="empty-state">
+            <i class="fa-regular fa-compass"></i>
+            <h3>Sin coincidencias en el archivo</h3>
+            <p>Ajusta los filtros o el término de búsqueda para explorar la colección.</p>
           </div>
         `;
         return;
       }
 
       items.forEach(art => {
-        const card = document.createElement('div');
+        const card = document.createElement('article');
         card.className = 'art-card';
         card.onclick = () => openModal(art.id);
 
+        const isPending = art.price.toLowerCase().includes('pendiente');
+        const dipticoLabel = art.isDiptico ? `<span class="diptico-badge">Díptico</span>` : '';
+
         card.innerHTML = `
           <div class="card-image-wrap">
-            <img src="${art.image}" alt="${art.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Obra+${art.id}'">
+            <img src="${art.image}" alt="${art.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/600x450/EAE6DF/57534E?text=Obra+${String(art.id).padStart(2, '0')}'">
             <span class="card-category-badge">${art.categoryName}</span>
           </div>
           <div class="card-content">
-            <div class="card-header">
-              <div>
-                <h3 class="card-title">${art.title}</h3>
-                <p class="card-artist">${art.artist}, ${art.year}</p>
-              </div>
+            <div class="card-meta-top">
+              <span>${art.artist}</span>
             </div>
-            <div class="card-quick-specs">
-              <div class="quick-spec"><i class="fa-solid fa-ruler-combined"></i> ${art.dimensions}</div>
-              <div class="quick-spec"><i class="fa-solid fa-palette"></i> ${art.medium}</div>
-              <div class="quick-spec"><i class="fa-solid fa-tag"></i> ${art.price}</div>
-            </div>
+            <h3 class="card-title">${art.title} ${dipticoLabel}</h3>
+            <p class="card-medium">${art.medium}</p>
             <div class="card-footer">
-              <span class="view-btn">Ver Ficha Técnica <i class="fa-solid fa-arrow-right"></i></span>
+              <span class="card-price ${isPending ? 'private' : ''}">${art.price}</span>
+              <span class="view-btn">Ficha <i class="fa-solid fa-arrow-right-long"></i></span>
             </div>
           </div>
         `;
@@ -256,25 +275,31 @@
 
       currentActiveArtworkId = id;
 
-      document.getElementById('modalImg').src = art.image;
-      document.getElementById('modalCategory').innerText = art.categoryName;
-      document.getElementById('modalTitle').innerText = art.title;
-      document.getElementById('modalArtist').innerText = `Por ${art.artist}`;
-      document.getElementById('modalNumber').innerText = `Obra #${art.id}`;
-      document.getElementById('modalYear').innerText = art.year;
-      document.getElementById('modalMedium').innerText = art.medium;
-      document.getElementById('modalDimensions').innerText = art.dimensions;
-      document.getElementById('modalPrice').innerText = art.price;
-
-      const frameRow = document.getElementById('rowFrame');
-      if (art.frame && art.frame !== "Sin Marco") {
-        frameRow.style.display = "flex";
-        document.getElementById('modalFrame').innerText = art.frame;
+      // Manejo especial de imagen para el Díptico en el Modal
+      const imageContainer = document.getElementById('modalImageContainer');
+      if (art.isDiptico && art.imagesDiptico) {
+        imageContainer.innerHTML = `
+          <div class="diptico-container">
+            <img src="${art.imagesDiptico[0]}" alt="${art.title} - Parte 1">
+            <img src="${art.imagesDiptico[1]}" alt="${art.title} - Parte 2">
+          </div>
+        `;
       } else {
-        frameRow.style.display = "none";
+        imageContainer.innerHTML = `<img id="modalImg" src="${art.image}" alt="${art.title}">`;
       }
 
-      document.getElementById('modalDesc').innerText = art.desc;
+      document.getElementById('modalCategory').innerText = art.categoryName;
+      document.getElementById('modalTitle').innerText = art.title;
+      document.getElementById('modalArtist').innerText = art.artist;
+      document.getElementById('modalSpecArtist').innerText = art.artist;
+      document.getElementById('modalMedium').innerText = art.medium;
+      document.getElementById('modalPrice').innerText = art.price;
+      document.getElementById('modalContact').innerText = art.contact;
+
+      // Configurar enlace de WhatsApp directo con mensaje personalizado
+      const cleanPhone = art.contact.replace(/\s+/g, '');
+      const whatsappMsg = encodeURIComponent(`Hola, me interesa solicitar información sobre la obra "${art.title}" del autor ${art.artist}.`);
+      document.getElementById('whatsappBtn').href = `https://wa.me/521${cleanPhone}?text=${whatsappMsg}`;
 
       // Resetear vista de QR
       document.getElementById('qrContainer').classList.add('hidden');
@@ -283,7 +308,6 @@
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
 
-      // Actualizar la URL con el parámetro de la obra para permitir compartir enlaces/QR
       if (updateHistory) {
         const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?obra=${id}`;
         window.history.pushState({ path: newUrl }, '', newUrl);
@@ -295,7 +319,6 @@
       modal.classList.remove('active');
       document.body.style.overflow = 'auto';
 
-      // Limpiar el parámetro ?obra= de la URL al cerrar el modal
       const cleanUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
       window.history.pushState({ path: cleanUrl }, '', cleanUrl);
     }
@@ -306,25 +329,22 @@
       }
     }
 
-    // Lógica para Generar y Mostrar el Código QR de la Obra Actual
     function toggleQR() {
       const qrContainer = document.getElementById('qrContainer');
       const isHidden = qrContainer.classList.contains('hidden');
 
       if (isHidden) {
         qrContainer.classList.remove('hidden');
-        
-        // Construir la URL directa a la obra
         const targetUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?obra=${currentActiveArtworkId}`;
         
         const qrcodeDiv = document.getElementById('qrcode');
-        qrcodeDiv.innerHTML = ''; // Limpiar previo
+        qrcodeDiv.innerHTML = '';
 
         qrGeneratorInstance = new QRCode(qrcodeDiv, {
           text: targetUrl,
-          width: 160,
-          height: 160,
-          colorDark: "#2E1065",
+          width: 150,
+          height: 150,
+          colorDark: "#18181B",
           colorLight: "#FFFFFF",
           correctLevel: QRCode.CorrectLevel.H
         });
@@ -347,29 +367,26 @@
       if (imageSrc) {
         const downloadLink = document.createElement('a');
         downloadLink.href = imageSrc;
-        downloadLink.download = `QR_Obra_${currentActiveArtworkId}_Diana_Llampallas.png`;
+        downloadLink.download = `QR_Obra_${currentActiveArtworkId}_Hermeticus.png`;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
       }
     }
 
-    // Detectar si el usuario escaneó un QR con parámetro URL ?obra=ID
-    function checkUrlForArtwork() {
+    (function checkUrlForArtwork() {
       const urlParams = new URLSearchParams(window.location.search);
       const obraId = parseInt(urlParams.get('obra'));
       if (obraId && !isNaN(obraId)) {
         openModal(obraId, false);
       }
-    }
+    })();
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeModal();
     });
 
-    // Inicializar catálogo y verificar parámetros de la URL
     renderGallery(artworks);
-    checkUrlForArtwork();
   </script>
 </body>
 </html>
